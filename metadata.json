@@ -1,0 +1,6 @@
+{
+  "name": "Enhancv Modern Resume Template",
+  "description": "A reusable, customizable A4 resume template inspired by Enhancv's Modern layout with dynamic content flow, modular sections, and print-ready typography.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

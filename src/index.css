@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/* Document Print Styling for A4 */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  /* Force exact A4 dimensions during print without page shadows or wrappers */
+  .a4-print-target {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: var(--page-padding, 12mm 12mm) !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background-color: #ffffff !important;
+    page-break-after: auto;
+    page-break-inside: auto;
+    transform: none !important;
+  }
+
+  /* Prevent awkward page break splits inside resume items */
+  .resume-entry-avoid-break {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .resume-section-avoid-break {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+}
+
+/* Screen viewing styles */
+.a4-screen-sheet {
+  width: 210mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  position: relative;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Subtle page fold / break guide on screen at 297mm */
+.a4-page-boundary-guide {
+  position: absolute;
+  top: 297mm;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed rgba(148, 163, 184, 0.45);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.a4-page-boundary-guide::after {
+  content: 'Page 1 boundary (297mm)';
+  position: absolute;
+  right: 12px;
+  top: -18px;
+  font-size: 10px;
+  color: #94a3b8;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
