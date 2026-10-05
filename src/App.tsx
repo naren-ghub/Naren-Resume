@@ -33,12 +33,22 @@ export default function App() {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState<boolean>(false);
   const [zoom, setZoom] = useState<number>(1.0);
 
-  // Auto-save to localStorage
+  // Auto-save to localStorage & sync in-memory content to code
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(resumeData));
     } catch {
       // Ignore quota exceeded error
+    }
+
+    try {
+      fetch('/_api/sync-template', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(resumeData),
+      }).catch(() => {});
+    } catch {
+      // Ignore network sync error in offline mode
     }
   }, [resumeData]);
 

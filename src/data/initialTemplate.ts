@@ -6,7 +6,7 @@ export const initialResumeData: ResumeData = {
     name: 'NAREN KUMAR',
     title: '',
     phone: '+91 98765 43210',
-    email: 'narenkumar@example.com',
+    email: 'narenkumar2304@gmail.com',
     linkedin: 'linkedin.com/in/narenkumar',
     website: '',
     location: 'Chennai, India',
