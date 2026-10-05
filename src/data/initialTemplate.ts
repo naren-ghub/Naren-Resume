@@ -1,4 +1,5 @@
 import { ResumeData } from '../types/resume';
+import { getDefaultFieldConfig } from '../utils/migration';
 
 export const initialResumeData: ResumeData = {
   header: {
@@ -32,7 +33,7 @@ export const initialResumeData: ResumeData = {
     layout: {
       mainColumnRatio: 68,
       columnGap: 20,
-      pageMargin: '12mm', // 12mm compact margin
+      pageMargin: '12mm',
       sectionSpacing: 14,
       entrySpacing: 10,
       showVerticalDivider: true,
@@ -52,8 +53,10 @@ export const initialResumeData: ResumeData = {
       title: 'SUMMARY',
       column: 'main',
       visible: true,
+      fieldConfig: getDefaultFieldConfig('summary'),
       summaryText:
         '[A concise 2–3 sentence overview summarizing your professional expertise, high-impact background, and core technical or business competencies. Replace this placeholder with your own executive summary or profile statement.]',
+      entries: [],
     },
     {
       id: 'section-experience',
@@ -61,13 +64,15 @@ export const initialResumeData: ResumeData = {
       title: 'EXPERIENCE',
       column: 'main',
       visible: true,
-      experienceEntries: [
+      fieldConfig: getDefaultFieldConfig('experience'),
+      entries: [
         {
           id: 'exp-1',
           title: '[Job Title / Senior Position]',
-          company: '[Company / Organization Name]',
+          subtitle: '[Company / Organization Name]',
           date: '01/2022 – Present',
           location: '[City, Country / Remote]',
+          description: '[Optional high-level overview of team scope, core mission, or strategic responsibilities.]',
           bullets: [
             '[Action verb] [key initiative or system architecture] delivering [quantifiable metric or high-value business result].',
             'Led cross-functional engineering team of [X] members to design and deploy [core solution] on schedule.',
@@ -77,7 +82,7 @@ export const initialResumeData: ResumeData = {
         {
           id: 'exp-2',
           title: '[Previous Role / Mid-Level Position]',
-          company: '[Previous Company Name]',
+          subtitle: '[Previous Company Name]',
           date: '06/2019 – 12/2021',
           location: '[City, Country]',
           bullets: [
@@ -93,13 +98,15 @@ export const initialResumeData: ResumeData = {
       title: 'PROJECTS',
       column: 'main',
       visible: true,
-      projectEntries: [
+      fieldConfig: getDefaultFieldConfig('projects'),
+      entries: [
         {
           id: 'proj-1',
-          name: '[Key Project / Application Name]',
-          technologies: '[Technologies: Python · TypeScript · React · Cloud Architecture]',
+          title: '[Key Project / Application Name]',
+          subtitle: '[Technologies: Python · TypeScript · React · Cloud Architecture]',
           date: '2023',
           link: 'github.com/your-username/project',
+          description: '[Brief architectural or product description stating the objective of the project.]',
           bullets: [
             'Designed and launched [key open-source or proprietary tool] serving [X,000+ active users or requests].',
             'Implemented [state-of-the-art technique or pipeline], accelerating throughput by [X%].',
@@ -107,8 +114,8 @@ export const initialResumeData: ResumeData = {
         },
         {
           id: 'proj-2',
-          name: '[Second Project Name]',
-          technologies: '[Technologies: PyTorch · Docker · Next.js · PostgreSQL]',
+          title: '[Second Project Name]',
+          subtitle: '[Technologies: PyTorch · Docker · Next.js · PostgreSQL]',
           date: '2022',
           bullets: [
             'Built an end-to-end [analytical model or platform] delivering real-time predictions with [X%] accuracy.',
@@ -122,14 +129,15 @@ export const initialResumeData: ResumeData = {
       title: 'EDUCATION',
       column: 'sidebar',
       visible: true,
-      educationEntries: [
+      fieldConfig: getDefaultFieldConfig('education'),
+      entries: [
         {
           id: 'edu-1',
-          degree: '[Degree Name, e.g. B.S. in Computer Science]',
-          institution: '[University / College Name]',
+          title: '[Degree Name, e.g. B.S. in Computer Science]',
+          subtitle: '[University / College Name]',
           date: '2015 – 2019',
           grade: 'GPA: [3.8 / 4.0] · [Honors / Cum Laude]',
-          details: '[Relevant Coursework or Thesis Topic]',
+          description: '[Relevant Coursework, thesis topic, or academic honors]',
         },
       ],
     },
@@ -139,22 +147,23 @@ export const initialResumeData: ResumeData = {
       title: 'SKILLS',
       column: 'sidebar',
       visible: true,
-      skillGroups: [
+      fieldConfig: getDefaultFieldConfig('skills'),
+      entries: [
         {
           id: 'sg-1',
-          category: '[CORE DOMAIN / AI & ML]',
+          title: '[CORE DOMAIN / AI & ML]',
           skills: '[Skill 1] · [Skill 2] · [Skill 3] · [Skill 4]',
           proficiencyStyle: 'text',
         },
         {
           id: 'sg-2',
-          category: '[FRAMEWORKS & LIBRARIES]',
+          title: '[FRAMEWORKS & LIBRARIES]',
           skills: '[Framework A] · [Tool B] · [Library C]',
           proficiencyStyle: 'text',
         },
         {
           id: 'sg-3',
-          category: '[PLATFORMS & TOOLS]',
+          title: '[PLATFORMS & TOOLS]',
           skills: '[Git / GitHub] · [Docker] · [AWS / GCP] · [Linux]',
           proficiencyStyle: 'text',
         },
@@ -166,13 +175,14 @@ export const initialResumeData: ResumeData = {
       title: 'CERTIFICATIONS',
       column: 'sidebar',
       visible: true,
-      certificationEntries: [
+      fieldConfig: getDefaultFieldConfig('certifications'),
+      entries: [
         {
           id: 'cert-1',
-          name: '[Professional Certification Name]',
-          issuer: '[Issuing Authority / Cloud Provider]',
+          title: '[Professional Certification Name]',
+          subtitle: '[Issuing Authority / Cloud Provider]',
           date: '2023',
-          achievement: '[Certified / Distinction]',
+          grade: '[Certified / Distinction]',
           description: '[Credential ID or specialization details]',
         },
       ],
@@ -183,16 +193,19 @@ export const initialResumeData: ResumeData = {
       title: 'LANGUAGES',
       column: 'sidebar',
       visible: true,
-      languageEntries: [
+      fieldConfig: getDefaultFieldConfig('languages'),
+      entries: [
         {
           id: 'lang-1',
-          language: '[Language 1]',
+          title: '[Language 1]',
+          subtitle: 'Native / Bilingual',
           proficiency: 'Native / Bilingual',
           level: 5,
         },
         {
           id: 'lang-2',
-          language: '[Language 2]',
+          title: '[Language 2]',
+          subtitle: 'Professional Working',
           proficiency: 'Professional Working',
           level: 4,
         },

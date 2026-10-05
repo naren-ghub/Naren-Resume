@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   const isCentered = headerSettings.alignment === 'center';
 
   return (
-    <header className={`w-full pb-3 border-b`} style={{ borderColor: colors.dividerColor }}>
+    <header className="w-full pb-2 border-b" style={{ borderColor: colors.dividerColor }}>
       <div className={`flex flex-col ${isCentered ? 'items-center text-center' : 'items-start text-left'}`}>
         {/* Candidate Name */}
         <div className="w-full">
@@ -47,7 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Professional Title / Headline */}
-        <div className="mt-1 w-full">
+        <div className="mt-0.5 w-full">
           <EditableText
             tag="p"
             isEditing={isEditing}
@@ -64,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Compact Horizontal Contact Row */}
         <div
-          className={`flex flex-wrap items-center mt-3 pt-1 ${
+          className={`flex flex-wrap items-center mt-1.5 pt-0.5 ${
             isCentered ? 'justify-center' : 'justify-start'
           }`}
           style={{

@@ -14,6 +14,7 @@
     color: #000000 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    overflow: visible !important;
   }
 
   .no-print,
@@ -34,12 +35,19 @@
     page-break-after: auto;
     page-break-inside: auto;
     transform: none !important;
+    overflow: visible !important;
   }
 
-  /* Prevent awkward page break splits inside resume items */
+  /* Keep section headers with at least their first entry */
+  .group\/section-header {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Short resume entries prefer to stay together, but allow natural page breaks */
   .resume-entry-avoid-break {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   .resume-section-avoid-break {

@@ -10,6 +10,59 @@ export type SectionType =
 
 export type ColumnTarget = 'main' | 'sidebar';
 
+export type FieldKey =
+  | 'title'
+  | 'subtitle'
+  | 'date'
+  | 'location'
+  | 'grade'
+  | 'link'
+  | 'description'
+  | 'bullets'
+  | 'proficiency'
+  | 'level'
+  | 'skills';
+
+export interface SectionFieldConfig {
+  showTitle?: boolean;
+  showSubtitle?: boolean; // Company / Institution / Technologies / Issuer / Organization
+  showDate?: boolean;
+  showLocation?: boolean;
+  showGrade?: boolean; // GPA / Honors / Distinction / Level
+  showLink?: boolean;
+  showDescription?: boolean;
+  showBullets?: boolean;
+  showProficiency?: boolean; // for languages or skills
+}
+
+export interface EntryItem {
+  id: string;
+  title?: string;
+  subtitle?: string; // Company / Organization / Institution / Technologies / Issuer
+  date?: string;
+  location?: string;
+  grade?: string; // GPA / Honors / Achievement / Distinction
+  link?: string;
+  description?: string;
+  bullets?: string[];
+  skills?: string; // For skill groups: "Skill 1 · Skill 2 · Skill 3"
+  proficiency?: string; // For languages: "Native", "Fluent"
+  level?: number; // 1-5 rating indicator
+  proficiencyStyle?: 'text' | 'dots' | 'tags';
+  // Per-entry field configuration overrides:
+  enabledFields?: FieldKey[]; // Explicitly enabled for this entry
+  disabledFields?: FieldKey[]; // Explicitly disabled for this entry
+}
+
+// Backward-compatibility type aliases
+export type ExperienceEntry = EntryItem;
+export type ProjectEntry = EntryItem;
+export type EducationEntry = EntryItem;
+export type SkillGroup = EntryItem;
+export type LanguageEntry = EntryItem;
+export type CertificationEntry = EntryItem;
+export type CustomEntry = EntryItem;
+
 export interface HeaderData {
   name: string;
   title: string;
@@ -20,88 +73,32 @@ export interface HeaderData {
   location: string;
 }
 
-export interface ExperienceEntry {
-  id: string;
-  title: string;
-  company: string;
-  date: string;
-  location: string;
-  bullets: string[];
-}
-
-export interface ProjectEntry {
-  id: string;
-  name: string;
-  technologies: string;
-  date?: string;
-  link?: string;
-  bullets: string[];
-}
-
-export interface EducationEntry {
-  id: string;
-  degree: string;
-  institution: string;
-  date: string;
-  grade?: string;
-  details?: string;
-}
-
-export interface SkillGroup {
-  id: string;
-  category: string;
-  skills: string; // e.g. "Skill 1 · Skill 2 · Skill 3"
-  proficiencyStyle?: 'text' | 'dots' | 'tags';
-  items?: { name: string; level?: number }[]; // optional proficiency 1-5
-}
-
-export interface LanguageEntry {
-  id: string;
-  language: string;
-  proficiency: string; // e.g. "Native", "Professional", "Fluent"
-  level?: number; // 1-5 optional
-}
-
-export interface CertificationEntry {
-  id: string;
-  name: string;
-  issuer: string;
-  date: string;
-  achievement?: string; // e.g. "Certified", "Distinction"
-  description?: string;
-}
-
-export interface CustomEntry {
-  id: string;
-  title: string;
-  subtitle?: string;
-  date?: string;
-  bullets: string[];
-}
-
 export interface ResumeSection {
   id: string;
   type: SectionType;
   title: string;
   column: ColumnTarget;
   visible: boolean;
+  fieldConfig?: SectionFieldConfig;
+  entries?: EntryItem[];
   summaryText?: string;
-  experienceEntries?: ExperienceEntry[];
-  projectEntries?: ProjectEntry[];
-  educationEntries?: EducationEntry[];
-  skillGroups?: SkillGroup[];
-  languageEntries?: LanguageEntry[];
-  certificationEntries?: CertificationEntry[];
-  customEntries?: CustomEntry[];
+  // Legacy backward-compatibility fields:
+  experienceEntries?: any[];
+  projectEntries?: any[];
+  educationEntries?: any[];
+  skillGroups?: any[];
+  languageEntries?: any[];
+  certificationEntries?: any[];
+  customEntries?: any[];
 }
 
 export interface ResumeTypography {
   fontFamily: 'Plus Jakarta Sans' | 'Inter' | 'Outfit' | 'DM Sans' | 'Source Serif 4';
-  nameSize: number; // 24 to 36 px
+  nameSize: number; // 24 to 40 px
   nameWeight: 'font-semibold' | 'font-bold' | 'font-extrabold';
   headingSize: number; // 12 to 16 px
-  bodySize: number; // 12 to 14 px
-  metadataSize: number; // 11 to 12 px
+  bodySize: number; // 11 to 14 px
+  metadataSize: number; // 10 to 12 px
   letterSpacing: 'normal' | 'wide' | 'wider';
   lineHeight: 'tight' | 'normal' | 'relaxed';
 }

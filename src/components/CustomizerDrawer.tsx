@@ -5,6 +5,7 @@ import {
   ColumnTarget,
   SectionType,
 } from '../types/resume';
+import { SectionSettingsModal } from './SectionSettingsModal';
 import {
   X,
   Type,
@@ -20,6 +21,7 @@ import {
   ArrowLeftRight,
   Trash2,
   Check,
+  Sliders,
 } from 'lucide-react';
 
 interface CustomizerDrawerProps {
@@ -32,7 +34,7 @@ interface CustomizerDrawerProps {
   onMoveSection: (sectionId: string, direction: 'up' | 'down') => void;
   onToggleSectionColumn: (sectionId: string) => void;
   onDeleteSection: (sectionId: string) => void;
-  onAddSection: (column: ColumnTarget, type: SectionType) => void;
+  onAddSection: (column: ColumnTarget, type: SectionType, title: string) => void;
 }
 
 type TabType = 'typography' | 'colors' | 'layout' | 'header' | 'sections';
@@ -50,13 +52,37 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
   onAddSection,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('typography');
-  const [newSectionTitle, setNewSectionTitle] = useState('');
+  const [newSectionTitle, setNewSectionTitle] = useState('ACHIEVEMENTS');
   const [newSectionType, setNewSectionType] = useState<SectionType>('custom');
   const [newSectionColumn, setNewSectionColumn] = useState<ColumnTarget>('main');
+  const [selectedSectionForSettings, setSelectedSectionForSettings] = useState<ResumeSection | null>(null);
 
   if (!isOpen) return null;
 
   const { typography, colors, layout, headerSettings } = config;
+
+  const defaultTitles: Record<SectionType, string> = {
+    custom: 'ACHIEVEMENTS',
+    experience: 'EXPERIENCE',
+    projects: 'PROJECTS',
+    education: 'EDUCATION',
+    skills: 'SKILLS',
+    certifications: 'CERTIFICATIONS',
+    languages: 'LANGUAGES',
+    summary: 'PROFILE',
+  };
+
+  const handleTypeChange = (newType: SectionType) => {
+    setNewSectionType(newType);
+    setNewSectionTitle(defaultTitles[newType] || 'NEW SECTION');
+  };
+
+  const handleAddNewSectionSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const finalTitle = newSectionTitle.trim() ? newSectionTitle.trim().toUpperCase() : defaultTitles[newSectionType];
+    onAddSection(newSectionColumn, newSectionType, finalTitle);
+    setNewSectionTitle('ACHIEVEMENTS');
+  };
 
   const updateTypography = (updated: Partial<typeof typography>) => {
     onUpdateConfig({
@@ -93,12 +119,6 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
     { name: 'Warm Bronze', hex: '#b45309' },
     { name: 'Charcoal Slate', hex: '#334155' },
   ];
-
-  const handleAddNewSectionSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAddSection(newSectionColumn, newSectionType);
-    setNewSectionTitle('');
-  };
 
   return (
     <aside
@@ -870,6 +890,14 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         type="button"
+                        onClick={() => setSelectedSectionForSettings(sec)}
+                        title="Configure section fields"
+                        className="p-1 text-slate-500 hover:text-blue-600 rounded transition-colors"
+                      >
+                        <Sliders size={13} />
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => onMoveSection(sec.id, 'up')}
                         disabled={idx === 0}
                         title="Move Up"
@@ -923,18 +951,32 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
                 </label>
                 <select
                   value={newSectionType}
-                  onChange={(e) => setNewSectionType(e.target.value as SectionType)}
+                  onChange={(e) => handleTypeChange(e.target.value as SectionType)}
                   className="w-full px-2.5 py-1.5 border border-slate-300 rounded bg-white text-xs"
                 >
-                  <option value="custom">Custom Section (Flexible)</option>
-                  <option value="experience">Experience</option>
-                  <option value="projects">Projects</option>
-                  <option value="education">Education</option>
-                  <option value="skills">Skills</option>
+                  <option value="custom">Custom Section (Flexible Fields)</option>
+                  <option value="experience">Experience (Work History)</option>
+                  <option value="projects">Projects (Applications, OSS)</option>
+                  <option value="education">Education (Degrees)</option>
+                  <option value="skills">Skills (Categories & Tools)</option>
                   <option value="certifications">Certifications</option>
                   <option value="languages">Languages</option>
-                  <option value="summary">Summary</option>
+                  <option value="summary">Summary / Profile Statement</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-slate-600 mb-1">
+                  Section Title (Heading)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newSectionTitle}
+                  onChange={(e) => setNewSectionTitle(e.target.value)}
+                  placeholder="e.g. ACHIEVEMENTS, AWARDS, PUBLICATIONS"
+                  className="w-full px-2.5 py-1.5 border border-slate-300 rounded bg-white text-xs font-semibold uppercase tracking-wider"
+                />
               </div>
 
               <div>
@@ -977,6 +1019,27 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
           </div>
         )}
       </div>
+
+      {/* Section Settings Modal when selected */}
+      {selectedSectionForSettings && (
+        <SectionSettingsModal
+          isOpen={true}
+          onClose={() => setSelectedSectionForSettings(null)}
+          section={selectedSectionForSettings}
+          onUpdateSection={(updated) => {
+            onUpdateSection(selectedSectionForSettings.id, updated);
+            setSelectedSectionForSettings((prev) => prev ? { ...prev, ...updated } : null);
+          }}
+          onDeleteSection={() => {
+            onDeleteSection(selectedSectionForSettings.id);
+            setSelectedSectionForSettings(null);
+          }}
+          onToggleColumn={() => {
+            onToggleSectionColumn(selectedSectionForSettings.id);
+            setSelectedSectionForSettings((prev) => prev ? { ...prev, column: prev.column === 'main' ? 'sidebar' : 'main' } : null);
+          }}
+        />
+      )}
     </aside>
   );
 };

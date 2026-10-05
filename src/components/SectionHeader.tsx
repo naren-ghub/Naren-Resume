@@ -1,7 +1,15 @@
 import React from 'react';
 import { ResumeTemplateConfig, ColumnTarget } from '../types/resume';
 import { EditableText } from './EditableText';
-import { ChevronUp, ChevronDown, ArrowLeftRight, Trash2, Plus } from 'lucide-react';
+import {
+  ChevronUp,
+  ChevronDown,
+  ArrowLeftRight,
+  Trash2,
+  Plus,
+  Sliders,
+  GripVertical,
+} from 'lucide-react';
 
 interface SectionHeaderProps {
   title: string;
@@ -9,6 +17,7 @@ interface SectionHeaderProps {
   config: ResumeTemplateConfig;
   isEditing: boolean;
   onUpdateTitle: (title: string) => void;
+  onOpenSettings?: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
   onToggleColumn?: () => void;
@@ -16,6 +25,13 @@ interface SectionHeaderProps {
   onAddItem?: () => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
+  dragHandleProps?: {
+    draggable?: boolean;
+    onDragStart?: (e: React.DragEvent) => void;
+    onDragOver?: (e: React.DragEvent) => void;
+    onDrop?: (e: React.DragEvent) => void;
+    onDragEnd?: () => void;
+  };
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -24,6 +40,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   config,
   isEditing,
   onUpdateTitle,
+  onOpenSettings,
   onMoveUp,
   onMoveDown,
   onToggleColumn,
@@ -31,14 +48,28 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   onAddItem,
   canMoveUp = true,
   canMoveDown = true,
+  dragHandleProps,
 }) => {
   const { typography, colors } = config;
   const isAccentDivider = colors.headingDividerColor === 'accent';
 
   return (
-    <div className="group/section-header relative mb-2.5">
+    <div
+      className="group/section-header relative mb-2.5 transition-colors"
+      {...dragHandleProps}
+    >
       <div className="flex items-center justify-between">
-        <div className="flex items-baseline gap-2 flex-grow">
+        <div className="flex items-center gap-1.5 flex-grow">
+          {/* Drag Handle in Edit Mode */}
+          {isEditing && (
+            <span
+              className="opacity-0 group-hover/section-header:opacity-100 cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-700 p-0.5 -ml-2 rounded transition-opacity no-print"
+              title="Drag to reorder section"
+            >
+              <GripVertical size={13} />
+            </span>
+          )}
+
           <EditableText
             tag="h2"
             isEditing={isEditing}
@@ -56,17 +87,29 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 
         {/* Action buttons visible during edit mode on hover */}
         {isEditing && (
-          <div className="opacity-0 group-hover/section-header:opacity-100 transition-opacity flex items-center gap-1 bg-white/95 px-1 py-0.5 rounded shadow-xs border border-slate-200 text-slate-500 no-print">
+          <div className="opacity-0 group-hover/section-header:opacity-100 transition-opacity flex items-center gap-0.5 bg-white/95 px-1 py-0.5 rounded-md shadow-xs border border-slate-200 text-slate-500 no-print z-10">
             {onAddItem && (
               <button
                 type="button"
                 onClick={onAddItem}
-                title="Add new item"
-                className="p-1 hover:text-blue-600 hover:bg-slate-100 rounded transition-colors"
+                title="Add new entry"
+                className="p-1 hover:text-blue-600 hover:bg-slate-100 rounded transition-colors text-xs flex items-center gap-0.5"
               >
                 <Plus size={13} />
               </button>
             )}
+
+            {onOpenSettings && (
+              <button
+                type="button"
+                onClick={onOpenSettings}
+                title="Configure visible fields & section settings"
+                className="p-1 hover:text-blue-600 hover:bg-slate-100 rounded transition-colors"
+              >
+                <Sliders size={12} />
+              </button>
+            )}
+
             {canMoveUp && onMoveUp && (
               <button
                 type="button"
