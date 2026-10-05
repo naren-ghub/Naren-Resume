@@ -52,7 +52,7 @@ export const getDefaultFieldConfig = (type: SectionType): SectionFieldConfig => 
       return {
         showTitle: true,
         showSubtitle: true, // Proficiency
-        showProficiency: true, // Level dots
+        showProficiency: false,
         showDescription: true,
       };
     case 'skills':
@@ -89,23 +89,45 @@ export const normalizeSection = (section: any): ResumeSection => {
   let entries: EntryItem[] = [];
 
   if (Array.isArray(section.entries) && section.entries.length > 0) {
-    entries = section.entries.map((e: any, idx: number) => ({
-      id: e.id || `entry-${Date.now()}-${idx}`,
-      title: e.title ?? e.name ?? e.degree ?? e.category ?? e.language ?? '',
-      subtitle: e.subtitle ?? e.company ?? e.technologies ?? e.institution ?? e.issuer ?? e.proficiency ?? '',
-      date: e.date ?? '',
-      location: e.location ?? '',
-      grade: e.grade ?? e.achievement ?? '',
-      link: e.link ?? '',
-      description: e.description ?? e.details ?? '',
-      bullets: Array.isArray(e.bullets) ? e.bullets : [],
-      skills: e.skills ?? '',
-      proficiency: e.proficiency ?? '',
-      level: e.level ?? (type === 'languages' ? 5 : undefined),
-      proficiencyStyle: e.proficiencyStyle ?? 'text',
-      enabledFields: Array.isArray(e.enabledFields) ? e.enabledFields : [],
-      disabledFields: Array.isArray(e.disabledFields) ? e.disabledFields : [],
-    }));
+    entries = section.entries.map((e: any, idx: number) => {
+      const skillsRaw = e.skills ?? '';
+      const skillsList = Array.isArray(e.skillsList)
+        ? e.skillsList
+        : skillsRaw
+        ? skillsRaw
+            .split(/[\n,·]+/)
+            .map((s: string) => s.trim())
+            .filter(Boolean)
+        : [];
+
+      return {
+        id: e.id || `entry-${Date.now()}-${idx}`,
+        title: e.title ?? e.name ?? e.degree ?? e.category ?? e.language ?? '',
+        subtitle:
+          e.subtitle ??
+          e.company ??
+          e.technologies ??
+          e.institution ??
+          e.issuer ??
+          e.proficiency ??
+          '',
+        date: e.date ?? '',
+        dateRange: e.dateRange,
+        location: e.location ?? '',
+        grade: e.grade ?? e.achievement ?? '',
+        link: e.link ?? '',
+        linkLabel: e.linkLabel ?? '',
+        description: e.description ?? e.details ?? '',
+        bullets: Array.isArray(e.bullets) ? e.bullets : [],
+        skills: skillsRaw || skillsList.join(' · '),
+        skillsList,
+        proficiency: e.proficiency ?? '',
+        level: e.level ?? (type === 'languages' ? 5 : undefined),
+        proficiencyStyle: e.proficiencyStyle ?? 'text',
+        enabledFields: Array.isArray(e.enabledFields) ? e.enabledFields : [],
+        disabledFields: Array.isArray(e.disabledFields) ? e.disabledFields : [],
+      };
+    });
   } else if (Array.isArray(section.experienceEntries)) {
     entries = section.experienceEntries.map((e: any) => ({
       id: e.id || `exp-${Date.now()}`,
@@ -282,6 +304,20 @@ export const migrateResumeData = (data: any): ResumeData => {
     },
     config: {
       ...data.config,
+      colors: {
+        ...data.config?.colors,
+        accentColor:
+          data.config?.colors?.accentColor &&
+          !['#000', '#000000', '#0f172a', '#1e293b', '#334155'].includes(
+            String(data.config.colors.accentColor).toLowerCase()
+          )
+            ? data.config.colors.accentColor
+            : '#1d4ed8',
+      },
+      typography: {
+        ...data.config?.typography,
+        companySizeSameAsRole: data.config?.typography?.companySizeSameAsRole !== false,
+      },
       layout: {
         ...data.config?.layout,
         pageMargin: data.config?.layout?.pageMargin || '12mm',

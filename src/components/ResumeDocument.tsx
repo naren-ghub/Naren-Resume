@@ -9,6 +9,7 @@ import { Header } from './Header';
 import { SectionRenderer } from './SectionRenderer';
 import { AddSectionModal } from './AddSectionModal';
 import { hasVisibleContent } from '../utils/migration';
+import { getLineHeightValue, getBodyLetterSpacing } from '../utils/typography';
 import { Plus } from 'lucide-react';
 
 interface ResumeDocumentProps {
@@ -104,6 +105,8 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
             padding: paddingValue,
             backgroundColor: '#ffffff',
             color: colors.primaryText,
+            lineHeight: getLineHeightValue(typography.lineHeight),
+            letterSpacing: getBodyLetterSpacing(typography.letterSpacing),
             '--page-padding': paddingValue,
           } as React.CSSProperties
         }
@@ -119,21 +122,31 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
           onUpdate={onUpdateHeader}
         />
 
-        {/* Two-Column Layout */}
+        {/* Two-Column CSS Grid Layout */}
         <div
-          className="w-full flex items-start mt-2"
+          className="w-full mt-2"
           style={{
-            gap: `${layout.columnGap}px`,
+            display: 'grid',
+            gridTemplateColumns: `minmax(0, ${layout.mainColumnRatio}fr) minmax(0, ${100 - layout.mainColumnRatio}fr)`,
+            columnGap: `${layout.columnGap}px`,
+            alignItems: 'start',
           }}
         >
           {/* Main Career Narrative Column (Dominant: ~68%) */}
-          <main
-            className="flex flex-col min-w-0"
-            style={{
-              width: `${layout.mainColumnRatio}%`,
-              flexGrow: 1,
-            }}
-          >
+          <main className="relative flex flex-col min-w-0">
+            {/* Subtle Vertical Hairline Divider centered in the grid gap */}
+            {layout.showVerticalDivider && (
+              <div
+                className="absolute top-0 bottom-0 pointer-events-none"
+                style={{
+                  right: `-${Math.round(layout.columnGap / 2)}px`,
+                  width: '1px',
+                  backgroundColor: colors.dividerColor,
+                }}
+                aria-hidden="true"
+              />
+            )}
+
             {mainSections.map((section, idx) => (
               <div
                 key={section.id}
@@ -181,20 +194,10 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
             )}
           </main>
 
-          {/* Subtle Vertical Hairline Divider between columns */}
-          {layout.showVerticalDivider && (
-            <div
-              className="self-stretch w-[1px] shrink-0"
-              style={{ backgroundColor: colors.dividerColor }}
-              aria-hidden="true"
-            />
-          )}
-
           {/* Sidebar Column (Supporting: ~32%) */}
           <aside
             className="flex flex-col min-w-0 rounded-xs"
             style={{
-              width: `${100 - layout.mainColumnRatio}%`,
               backgroundColor:
                 colors.sidebarBackground && colors.sidebarBackground !== 'transparent'
                   ? colors.sidebarBackground

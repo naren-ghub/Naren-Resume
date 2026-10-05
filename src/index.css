@@ -88,3 +88,35 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
+
+/* Centralized Typography Authority: template controls base font-family and font-size */
+#resume-document b,
+#resume-document strong,
+#resume-document i,
+#resume-document em,
+#resume-document u,
+#resume-document a {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+#resume-document a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+#resume-document b,
+#resume-document strong {
+  font-weight: 700;
+}
+
+#resume-document i,
+#resume-document em {
+  font-style: italic;
+}
+
+#resume-document u {
+  text-decoration: underline;
+}

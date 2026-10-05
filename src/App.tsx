@@ -209,7 +209,12 @@ export default function App() {
             id: `exp-${timestamp}`,
             title: '[Job Title / Role]',
             subtitle: '[Company Name]',
-            date: '2023 – Present',
+            date: 'Jan 2023 – Present',
+            dateRange: {
+              startMonth: 1,
+              startYear: 2023,
+              ongoing: true,
+            },
             location: '[City, Country]',
             description: '[Summary overview of scope and key responsibilities]',
             bullets: [
@@ -225,6 +230,9 @@ export default function App() {
             title: '[Project Name]',
             subtitle: '[Technologies: React · TypeScript · Node.js]',
             date: '2024',
+            dateRange: {
+              startYear: 2024,
+            },
             link: 'github.com/project',
             bullets: [
               'Designed and developed [solution] delivering [benefit/performance].',
@@ -239,6 +247,10 @@ export default function App() {
             title: '[Degree / Program Name]',
             subtitle: '[University / Institution]',
             date: '2019 – 2023',
+            dateRange: {
+              startYear: 2019,
+              endYear: 2023,
+            },
             grade: 'GPA: 3.8 / 4.0',
           },
         ];
@@ -248,7 +260,8 @@ export default function App() {
           {
             id: `sg-${timestamp}`,
             title: '[NEW SKILL GROUP]',
-            skills: '[Skill 1] · [Skill 2] · [Skill 3]',
+            skills: 'Skill 1 · Skill 2 · Skill 3',
+            skillsList: ['Skill 1', 'Skill 2', 'Skill 3'],
           },
         ];
         break;

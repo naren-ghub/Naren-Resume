@@ -247,9 +247,9 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
               </div>
               <input
                 type="range"
-                min="24"
-                max="40"
-                step="2"
+                min="20"
+                max="36"
+                step="1"
                 value={typography.nameSize}
                 onChange={(e) => updateTypography({ nameSize: Number(e.target.value) })}
                 className="w-full accent-blue-600 cursor-pointer"
@@ -293,9 +293,9 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
               </div>
               <input
                 type="range"
-                min="12"
-                max="16"
-                step="1"
+                min="10"
+                max="15"
+                step="0.5"
                 value={typography.headingSize}
                 onChange={(e) =>
                   updateTypography({ headingSize: Number(e.target.value) })
@@ -312,8 +312,8 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
               </div>
               <input
                 type="range"
-                min="11"
-                max="14"
+                min="8.5"
+                max="13"
                 step="0.5"
                 value={typography.bodySize}
                 onChange={(e) =>
@@ -321,6 +321,59 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
                 }
                 className="w-full accent-blue-600 cursor-pointer"
               />
+            </div>
+
+            {/* Metadata Text Size */}
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="font-semibold text-slate-900">Metadata Size</label>
+                <span className="font-mono text-slate-500">{typography.metadataSize}px</span>
+              </div>
+              <input
+                type="range"
+                min="7.5"
+                max="11"
+                step="0.5"
+                value={typography.metadataSize}
+                onChange={(e) =>
+                  updateTypography({ metadataSize: Number(e.target.value) })
+                }
+                className="w-full accent-blue-600 cursor-pointer"
+              />
+            </div>
+
+            {/* Company / Role Font Size Alignment */}
+            <div>
+              <label className="block font-semibold text-slate-900 mb-1">
+                Company / Org Font Size
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => updateTypography({ companySizeSameAsRole: true })}
+                  className={`py-1.5 px-2 rounded-md border text-center text-xs transition-colors ${
+                    typography.companySizeSameAsRole !== false
+                      ? 'border-blue-600 bg-blue-50 text-blue-900 font-semibold'
+                      : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                  }`}
+                >
+                  Same as Role ({typography.bodySize + 1}px)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateTypography({ companySizeSameAsRole: false })}
+                  className={`py-1.5 px-2 rounded-md border text-center text-xs transition-colors ${
+                    typography.companySizeSameAsRole === false
+                      ? 'border-blue-600 bg-blue-50 text-blue-900 font-semibold'
+                      : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                  }`}
+                >
+                  Compact Metadata ({typography.metadataSize}px)
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-500 mt-1">
+                Pairs role and company at equal visual hierarchy.
+              </p>
             </div>
 
             {/* Line Height */}
@@ -334,7 +387,7 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
                     key={lh}
                     type="button"
                     onClick={() => updateTypography({ lineHeight: lh })}
-                    className={`capitalize py-1.5 px-2 rounded-md border text-center transition-colors ${
+                    className={`capitalize py-1.5 px-2 rounded-md border text-center transition-colors text-xs ${
                       typography.lineHeight === lh
                         ? 'border-blue-600 bg-blue-50 text-blue-900 font-semibold'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-600'
@@ -344,12 +397,15 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
                   </button>
                 ))}
               </div>
+              <p className="text-[10px] text-slate-500 mt-1">
+                Controls vertical distance between lines of text throughout the document.
+              </p>
             </div>
 
             {/* Letter Spacing */}
             <div>
               <label className="block font-semibold text-slate-900 mb-1.5">
-                Heading Tracking (Letter Spacing)
+                Letter Spacing (Tracking)
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {(['normal', 'wide', 'wider'] as const).map((track) => (
@@ -357,7 +413,7 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
                     key={track}
                     type="button"
                     onClick={() => updateTypography({ letterSpacing: track })}
-                    className={`capitalize py-1.5 px-2 rounded-md border text-center transition-colors ${
+                    className={`capitalize py-1.5 px-2 rounded-md border text-center transition-colors text-xs ${
                       typography.letterSpacing === track
                         ? 'border-blue-600 bg-blue-50 text-blue-900 font-semibold'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-600'
@@ -367,6 +423,9 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
                   </button>
                 ))}
               </div>
+              <p className="text-[10px] text-slate-500 mt-1">
+                Controls character spacing across candidate name, headings, and document copy.
+              </p>
             </div>
           </div>
         )}
@@ -462,6 +521,30 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
               </div>
             </div>
 
+            {/* Section Heading Color (Independent from accent!) */}
+            <div>
+              <label className="block font-semibold text-slate-900 mb-1">
+                Section Heading Color
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={colors.sectionHeadingColor || colors.primaryText}
+                  onChange={(e) => updateColors({ sectionHeadingColor: e.target.value })}
+                  className="w-8 h-8 rounded border border-slate-300 cursor-pointer p-0"
+                />
+                <input
+                  type="text"
+                  value={colors.sectionHeadingColor || colors.primaryText}
+                  onChange={(e) => updateColors({ sectionHeadingColor: e.target.value })}
+                  className="flex-1 px-2.5 py-1.5 rounded border border-slate-300 font-mono text-xs"
+                />
+              </div>
+              <p className="text-[10px] text-slate-400 mt-0.5">
+                Controls headings like SUMMARY, EXPERIENCE, SKILLS independently from accents.
+              </p>
+            </div>
+
             {/* Heading Underline Accent Style */}
             <div>
               <label className="block font-semibold text-slate-900 mb-1.5">
@@ -532,7 +615,7 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
                   1-Page Compact Preset
                 </span>
                 <span className="text-[11px] text-blue-700">
-                  Sets 12mm margins, 10px section & 6px entry spacing
+                  Sets 12mm margins, 9.5pt body, 9px section & 6px entry spacing
                 </span>
               </div>
               <button
@@ -540,13 +623,20 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
                 onClick={() => {
                   updateLayout({
                     pageMargin: '12mm',
-                    sectionSpacing: 10,
+                    sectionSpacing: 9,
                     entrySpacing: 6,
-                    columnGap: 16,
+                    columnGap: 18,
                     compactBullets: true,
                   });
                   updateTypography({
+                    nameSize: 24,
+                    headingSize: 11,
+                    bodySize: 9.5,
+                    metadataSize: 8.5,
                     lineHeight: 'tight',
+                  });
+                  updateHeader({
+                    contactSpacing: 12,
                   });
                 }}
                 className="px-2.5 py-1.5 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700 transition-colors shadow-2xs whitespace-nowrap"
@@ -627,8 +717,8 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
               </div>
               <input
                 type="range"
-                min="4"
-                max="20"
+                min="3"
+                max="16"
                 step="1"
                 value={layout.entrySpacing}
                 onChange={(e) =>

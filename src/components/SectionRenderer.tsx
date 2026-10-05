@@ -10,6 +10,7 @@ import { SectionSettingsModal } from './SectionSettingsModal';
 import { DynamicEntryRenderer } from './DynamicEntryRenderer';
 import { EditableText } from './EditableText';
 import { hasVisibleContent } from '../utils/migration';
+import { getLineHeightValue, getBodyLetterSpacing } from '../utils/typography';
 import { Plus } from 'lucide-react';
 
 interface SectionRendererProps {
@@ -109,7 +110,12 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
           id: `exp-${timestamp}`,
           title: '[Job Title / Role]',
           subtitle: '[Company Name]',
-          date: '2023 – Present',
+          date: 'Jan 2023 – Present',
+          dateRange: {
+            startMonth: 1,
+            startYear: 2023,
+            ongoing: true,
+          },
           location: '[City, Country]',
           description: '[Summary overview of scope and key responsibilities]',
           bullets: [
@@ -123,6 +129,9 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
           title: '[Project Name]',
           subtitle: '[Technologies: React · TypeScript · Node.js]',
           date: '2024',
+          dateRange: {
+            startYear: 2024,
+          },
           link: 'github.com/project',
           bullets: [
             'Designed and developed [solution] delivering [benefit/performance].',
@@ -135,6 +144,10 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
           title: '[Degree / Program Name]',
           subtitle: '[University / Institution]',
           date: '2019 – 2023',
+          dateRange: {
+            startYear: 2019,
+            endYear: 2023,
+          },
           grade: 'GPA: 3.8 / 4.0',
         };
         break;
@@ -142,7 +155,8 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
         newEntry = {
           id: `sg-${timestamp}`,
           title: '[NEW SKILL GROUP]',
-          skills: '[Skill 1] · [Skill 2] · [Skill 3]',
+          skills: 'Skill 1 · Skill 2 · Skill 3',
+          skillsList: ['Skill 1', 'Skill 2', 'Skill 3'],
         };
         break;
       case 'certifications':
@@ -198,9 +212,6 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
       className={`resume-section-avoid-break w-full ${
         !section.visible ? 'opacity-40 border border-dashed border-amber-300 p-2 rounded' : ''
       }`}
-      style={{
-        marginBottom: `${layout.sectionSpacing}px`,
-      }}
     >
       {/* Section Header */}
       <SectionHeader
@@ -238,12 +249,8 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
             className="font-normal"
             style={{
               fontSize: `${typography.bodySize}px`,
-              lineHeight:
-                typography.lineHeight === 'relaxed'
-                  ? '1.6'
-                  : typography.lineHeight === 'tight'
-                  ? '1.35'
-                  : '1.5',
+              lineHeight: getLineHeightValue(typography.lineHeight),
+              letterSpacing: getBodyLetterSpacing(typography.letterSpacing),
               color: colors.primaryText,
             }}
           >
@@ -254,7 +261,13 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
               value={section.summaryText || ''}
               onChange={(summaryText) => onUpdateSection({ summaryText })}
               placeholder="[Write your summary or profile narrative here...]"
-              className="block leading-relaxed"
+              className="block"
+              style={{
+                fontSize: `${typography.bodySize}px`,
+                lineHeight: getLineHeightValue(typography.lineHeight),
+                letterSpacing: getBodyLetterSpacing(typography.letterSpacing),
+                color: colors.primaryText,
+              }}
             />
           </div>
         )}

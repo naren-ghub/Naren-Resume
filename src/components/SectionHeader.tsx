@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ResumeTemplateConfig, ColumnTarget } from '../types/resume';
 import { EditableText } from './EditableText';
+import { getHeadingLetterSpacing } from '../utils/typography';
 import {
   ChevronUp,
   ChevronDown,
@@ -9,6 +10,7 @@ import {
   Plus,
   Sliders,
   GripVertical,
+  MoreHorizontal,
 } from 'lucide-react';
 
 interface SectionHeaderProps {
@@ -52,21 +54,37 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 }) => {
   const { typography, colors } = config;
   const isAccentDivider = colors.headingDividerColor === 'accent';
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isMenuOpen]);
 
   return (
     <div
-      className="group/section-header relative mb-2.5 transition-colors"
+      className="group/section-header relative mb-2 transition-colors"
       {...dragHandleProps}
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5 flex-grow">
-          {/* Drag Handle in Edit Mode */}
+        <div className="flex items-center gap-1.5 flex-grow min-w-0">
+          {/* Subtle Drag Handle in Edit Mode */}
           {isEditing && (
             <span
               className="opacity-0 group-hover/section-header:opacity-100 cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-700 p-0.5 -ml-2 rounded transition-opacity no-print"
               title="Drag to reorder section"
             >
-              <GripVertical size={13} />
+              <GripVertical size={12} />
             </span>
           )}
 
@@ -76,80 +94,103 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
             value={title}
             onChange={onUpdateTitle}
             placeholder="SECTION TITLE"
-            className="font-bold uppercase tracking-wider block"
+            className="font-bold uppercase block"
             style={{
               fontSize: `${typography.headingSize}px`,
-              color: colors.primaryText,
-              letterSpacing: '0.08em',
+              color: colors.sectionHeadingColor || colors.primaryText,
+              letterSpacing: getHeadingLetterSpacing(typography.letterSpacing),
             }}
           />
         </div>
 
-        {/* Action buttons visible during edit mode on hover */}
+        {/* Compact non-intrusive action controls in Edit Mode */}
         {isEditing && (
-          <div className="opacity-0 group-hover/section-header:opacity-100 transition-opacity flex items-center gap-0.5 bg-white/95 px-1 py-0.5 rounded-md shadow-xs border border-slate-200 text-slate-500 no-print z-10">
+          <div className="opacity-0 group-hover/section-header:opacity-100 transition-opacity flex items-center gap-1 no-print z-10 shrink-0">
             {onAddItem && (
               <button
                 type="button"
                 onClick={onAddItem}
-                title="Add new entry"
-                className="p-1 hover:text-blue-600 hover:bg-slate-100 rounded transition-colors text-xs flex items-center gap-0.5"
+                title="Add new entry to this section"
+                className="p-1 hover:text-blue-600 hover:bg-slate-100 text-slate-500 rounded transition-colors text-xs flex items-center gap-0.5"
               >
                 <Plus size={13} />
               </button>
             )}
 
-            {onOpenSettings && (
+            <div className="relative" ref={menuRef}>
               <button
                 type="button"
-                onClick={onOpenSettings}
-                title="Configure visible fields & section settings"
-                className="p-1 hover:text-blue-600 hover:bg-slate-100 rounded transition-colors"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                title="Section options"
+                className="p-1 hover:text-slate-800 hover:bg-slate-100 text-slate-500 rounded transition-colors"
               >
-                <Sliders size={12} />
+                <MoreHorizontal size={13} />
               </button>
-            )}
 
-            {canMoveUp && onMoveUp && (
-              <button
-                type="button"
-                onClick={onMoveUp}
-                title="Move section up"
-                className="p-1 hover:text-slate-900 hover:bg-slate-100 rounded transition-colors"
-              >
-                <ChevronUp size={13} />
-              </button>
-            )}
-            {canMoveDown && onMoveDown && (
-              <button
-                type="button"
-                onClick={onMoveDown}
-                title="Move section down"
-                className="p-1 hover:text-slate-900 hover:bg-slate-100 rounded transition-colors"
-              >
-                <ChevronDown size={13} />
-              </button>
-            )}
-            {onToggleColumn && (
-              <button
-                type="button"
-                onClick={onToggleColumn}
-                title={`Move to ${column === 'main' ? 'Sidebar' : 'Main'} column`}
-                className="p-1 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
-              >
-                <ArrowLeftRight size={13} />
-              </button>
-            )}
-            {onDelete && (
-              <button
-                type="button"
-                onClick={onDelete}
-                title="Delete section"
-                className="p-1 hover:text-red-600 hover:bg-slate-100 rounded transition-colors"
-              >
-                <Trash2 size={13} />
-              </button>
-            )}
+              {isMenuOpen && (
+                <div
+                  className="absolute right-0 top-full mt-1 w-44 bg-white border border-slate-200 rounded-lg shadow-xl p-1.5 z-40 text-xs space-y-0.5 animate-in fade-in zoom-in-95 duration-75"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {onOpenSettings && (
+                    <button
+                      type="button"
+                      onClick={onOpenSettings}
+                      className="w-full text-left flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-50 text-slate-700"
+                    >
+                      <Sliders size={12} className="text-blue-600" />
+                      <span>Configure Fields</span>
+                    </button>
+                  )}
+
+                  {canMoveUp && onMoveUp && (
+                    <button
+                      type="button"
+                      onClick={onMoveUp}
+                      className="w-full text-left flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-50 text-slate-700"
+                    >
+                      <ChevronUp size={12} />
+                      <span>Move Up</span>
+                    </button>
+                  )}
+
+                  {canMoveDown && onMoveDown && (
+                    <button
+                      type="button"
+                      onClick={onMoveDown}
+                      className="w-full text-left flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-50 text-slate-700"
+                    >
+                      <ChevronDown size={12} />
+                      <span>Move Down</span>
+                    </button>
+                  )}
+
+                  {onToggleColumn && (
+                    <button
+                      type="button"
+                      onClick={onToggleColumn}
+                      className="w-full text-left flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-50 text-slate-700"
+                    >
+                      <ArrowLeftRight size={12} className="text-indigo-600" />
+                      <span>Move to {column === 'main' ? 'Sidebar' : 'Main'}</span>
+                    </button>
+                  )}
+
+                  {onDelete && (
+                    <div className="pt-1 mt-1 border-t border-slate-100">
+                      <button
+                        type="button"
+                        onClick={onDelete}
+                        className="w-full text-left flex items-center gap-2 px-2 py-1.5 rounded hover:bg-red-50 text-red-600 font-medium"
+                      >
+                        <Trash2 size={12} />
+                        <span>Delete Section</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
