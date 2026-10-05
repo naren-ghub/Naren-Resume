@@ -13,7 +13,7 @@ import { ResumeDocument } from './components/ResumeDocument';
 import { Toolbar } from './components/Toolbar';
 import { CustomizerDrawer } from './components/CustomizerDrawer';
 
-const STORAGE_KEY = 'enhancv_modern_resume_data_v1';
+const STORAGE_KEY = 'enhancv_modern_resume_data_v3';
 
 export default function App() {
   const [resumeData, setResumeData] = useState<ResumeData>(() => {
